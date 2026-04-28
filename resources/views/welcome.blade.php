@@ -560,7 +560,7 @@
                 </div>
             </div>
             <div class="hero-image" data-aos="fade-left">
-                <img src="{{ asset('images/hero-couple.png') }}" alt="Premium Wedding Invitation">
+                <img src="{{ asset('hero-couple.png') }}" alt="Premium Wedding Invitation">
                 <div class="floating-card f-card-1">
                     <div class="feature-icon" style="width:40px; height:40px; font-size: 1.2rem; margin-bottom:0;">
                         <i class="ti ti-heart"></i>
