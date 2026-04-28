@@ -4,17 +4,20 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Platform Undangan Digital Terbaik - Buat undangan pernikahan online yang elegan, modern, dan praktis.">
+    <meta name="description"
+        content="Platform Undangan Digital Terbaik - Buat undangan pernikahan online yang elegan, modern, dan praktis.">
     <title>{{ config('app.name', 'UndangKita') }} - Undangan Digital Elegan</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Dancing+Script:wght@700&display=swap"
+        rel="stylesheet">
 
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-    
+
     <!-- Animate On Scroll -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
@@ -47,9 +50,18 @@
         }
 
         /* PREMIUM SCROLLBAR */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
 
         .container {
             max-width: 1200px;
@@ -129,7 +141,7 @@
             display: flex;
             align-items: center;
             background: radial-gradient(circle at top right, #fff5e6, transparent),
-                        radial-gradient(circle at bottom left, #fff0f5, transparent);
+                radial-gradient(circle at bottom left, #fff0f5, transparent);
         }
 
         .hero-grid {
@@ -221,12 +233,27 @@
             animation: float 4s ease-in-out infinite;
         }
 
-        .f-card-1 { bottom: 40px; left: -40px; }
-        .f-card-2 { top: 40px; right: -40px; animation-delay: 1s; }
+        .f-card-1 {
+            bottom: 40px;
+            left: -40px;
+        }
+
+        .f-card-2 {
+            top: 40px;
+            right: -40px;
+            animation-delay: 1s;
+        }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
         }
 
         /* FEATURES */
@@ -452,18 +479,47 @@
 
         /* RESPONSIVE */
         @media (max-width: 992px) {
-            .hero-grid { grid-template-columns: 1fr; text-align: center; }
-            .hero-text p { margin: 0 auto 40px; }
-            .cta-group { justify-content: center; }
-            .features-grid, .pricing-grid { grid-template-columns: repeat(2, 1fr); }
-            .price-card.featured { transform: scale(1); }
-            .footer-grid { grid-template-columns: 1fr 1fr; }
+            .hero-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-text p {
+                margin: 0 auto 40px;
+            }
+
+            .cta-group {
+                justify-content: center;
+            }
+
+            .features-grid,
+            .pricing-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .price-card.featured {
+                transform: scale(1);
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
         }
 
         @media (max-width: 768px) {
-            .hero-text h1 { font-size: 3rem; }
-            .features-grid, .pricing-grid, .footer-grid { grid-template-columns: 1fr; }
-            .nav-links { display: none; }
+            .hero-text h1 {
+                font-size: 3rem;
+            }
+
+            .features-grid,
+            .pricing-grid,
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -478,14 +534,14 @@
                 <a href="#tema">Tema</a>
                 <a href="#harga">Harga</a>
                 @if (Route::has('login'))
-                    @auth
-                        <a href="{{ url('/dashboard') }}" class="btn-nav">Dashboard</a>
-                    @else
-                        <a href="{{ route('login') }}">Masuk</a>
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="btn-nav">Mulai Sekarang</a>
-                        @endif
-                    @endauth
+                @auth
+                <a href="{{ url('/dashboard') }}" class="btn-nav">Dashboard</a>
+                @else
+                <a href="{{ route('login') }}">Masuk</a>
+                @if (Route::has('register'))
+                <a href="{{ route('register') }}" class="btn-nav">Mulai Sekarang</a>
+                @endif
+                @endauth
                 @endif
             </div>
         </div>
@@ -496,14 +552,15 @@
         <div class="container hero-grid">
             <div class="hero-text" data-aos="fade-right">
                 <h1>Abadikan Momen <span>Cinta</span> dengan Undangan Digital</h1>
-                <p>Ubah hari spesial Anda menjadi pengalaman digital yang tak terlupakan. Elegan, eksklusif, dan ramah lingkungan.</p>
+                <p>Ubah hari spesial Anda menjadi pengalaman digital yang tak terlupakan. Elegan, eksklusif, dan ramah
+                    lingkungan.</p>
                 <div class="cta-group">
                     <a href="{{ route('register') }}" class="btn-primary">Buat Undangan</a>
                     <a href="#tema" class="btn-outline">Lihat Tema</a>
                 </div>
             </div>
             <div class="hero-image" data-aos="fade-left">
-                <img src="{{ asset('inapp/dist/assets/images/hero-couple.png') }}" alt="Premium Wedding Invitation">
+                <img src="{{ asset('images/hero-couple.png') }}" alt="Premium Wedding Invitation">
                 <div class="floating-card f-card-1">
                     <div class="feature-icon" style="width:40px; height:40px; font-size: 1.2rem; margin-bottom:0;">
                         <i class="ti ti-heart"></i>
@@ -537,7 +594,8 @@
                 <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
                     <div class="feature-icon"><i class="ti ti-device-mobile"></i></div>
                     <h3>Responsif & Mobile Friendly</h3>
-                    <p>Undangan Anda akan tampil sempurna di semua perangkat, baik smartphone, tablet, maupun desktop.</p>
+                    <p>Undangan Anda akan tampil sempurna di semua perangkat, baik smartphone, tablet, maupun desktop.
+                    </p>
                 </div>
                 <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
                     <div class="feature-icon"><i class="ti ti-music"></i></div>
@@ -573,19 +631,31 @@
         <div class="container">
             <div class="section-header" data-aos="fade-up">
                 <h2>Pilihan Tema Eksklusif</h2>
-                <p>Temukan desain yang mencerminkan kisah cinta Anda. Mulai dari gaya minimalis hingga kemewahan yang klasik.</p>
+                <p>Temukan desain yang mencerminkan kisah cinta Anda. Mulai dari gaya minimalis hingga kemewahan yang
+                    klasik.</p>
             </div>
-            <div class="showcase-content" style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;">
+            <div class="showcase-content"
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;">
                 <div class="showcase-image" data-aos="zoom-in">
-                    <img src="{{ asset('inapp/dist/assets/images/themes-showcase.png') }}" alt="Template Showcase" style="width:100%; border-radius:30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1);">
+                    <img src="{{ asset('themes-showcase.png') }}" alt="Template Showcase"
+                        style="width:100%; border-radius:30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1);">
                 </div>
                 <div class="showcase-text" data-aos="fade-left">
-                    <h3 style="font-family: var(--font-serif); font-size: 2.2rem; margin-bottom: 20px;">Desain yang Dapat Disesuaikan Sepenuhnya</h3>
-                    <p style="color: var(--text-muted); margin-bottom: 30px;">Setiap tema dirancang oleh desainer profesional untuk memastikan kualitas visual terbaik di hari spesial Anda. Anda dapat mengubah teks, foto, musik, hingga susunan acara dengan sangat mudah.</p>
+                    <h3 style="font-family: var(--font-serif); font-size: 2.2rem; margin-bottom: 20px;">Desain yang
+                        Dapat Disesuaikan Sepenuhnya</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 30px;">Setiap tema dirancang oleh desainer
+                        profesional untuk memastikan kualitas visual terbaik di hari spesial Anda. Anda dapat mengubah
+                        teks, foto, musik, hingga susunan acara dengan sangat mudah.</p>
                     <ul style="list-style: none; margin-bottom: 40px;">
-                        <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;"><i class="ti ti-circle-check-filled" style="color: var(--primary);"></i> Editor yang intuitif</li>
-                        <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;"><i class="ti ti-circle-check-filled" style="color: var(--primary);"></i> Live Preview seketika</li>
-                        <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;"><i class="ti ti-circle-check-filled" style="color: var(--primary);"></i> Pilihan font & warna yang beragam</li>
+                        <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;"><i
+                                class="ti ti-circle-check-filled" style="color: var(--primary);"></i> Editor yang
+                            intuitif</li>
+                        <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;"><i
+                                class="ti ti-circle-check-filled" style="color: var(--primary);"></i> Live Preview
+                            seketika</li>
+                        <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;"><i
+                                class="ti ti-circle-check-filled" style="color: var(--primary);"></i> Pilihan font &
+                            warna yang beragam</li>
                     </ul>
                     <a href="{{ route('register') }}" class="btn-primary">Lihat Katalog Lengkap</a>
                 </div>
@@ -648,7 +718,8 @@
         <div class="container footer-grid">
             <div class="footer-about">
                 <a href="/" class="logo" style="color:white;">UndangKita</a>
-                <p>Platform undangan digital terbaik di Indonesia. Membantu Anda menyebarkan kebahagiaan dengan cara yang lebih elegan dan modern.</p>
+                <p>Platform undangan digital terbaik di Indonesia. Membantu Anda menyebarkan kebahagiaan dengan cara
+                    yang lebih elegan dan modern.</p>
                 <div class="social-links">
                     <a href="#"><i class="ti ti-brand-instagram"></i></a>
                     <a href="#"><i class="ti ti-brand-facebook"></i></a>
@@ -676,13 +747,16 @@
             </div>
             <div class="footer-links">
                 <h4>Kontak</h4>
-                <p style="color:#aaa; font-size:0.9rem; margin-bottom:10px;"><i class="ti ti-mail"></i> halo@undangkita.id</p>
-                <p style="color:#aaa; font-size:0.9rem; margin-bottom:10px;"><i class="ti ti-phone"></i> +62 812 3456 7890</p>
+                <p style="color:#aaa; font-size:0.9rem; margin-bottom:10px;"><i class="ti ti-mail"></i>
+                    halo@undangkita.id</p>
+                <p style="color:#aaa; font-size:0.9rem; margin-bottom:10px;"><i class="ti ti-phone"></i> +62 812 3456
+                    7890</p>
                 <p style="color:#aaa; font-size:0.9rem;"><i class="ti ti-map-pin"></i> Jakarta, Indonesia</p>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 UndangKita. All rights reserved. Crafted with <i class="ti ti-heart" style="color:var(--accent);"></i> by {{ config('app.name') }} Team.</p>
+            <p>&copy; 2026 UndangKita. All rights reserved. Crafted with <i class="ti ti-heart"
+                    style="color:var(--accent);"></i> by {{ config('app.name') }} Team.</p>
         </div>
     </footer>
 
