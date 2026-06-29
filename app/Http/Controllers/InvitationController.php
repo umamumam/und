@@ -395,7 +395,7 @@ class InvitationController extends Controller
     public function wishesDetail(Invitation $invitation)
     {
         // Ensure user owns this invitation
-        if ($invitation->user_id !== auth()->id()) {
+        if ((int)$invitation->user_id !== (int)auth()->id()) {
             abort(403, 'Gagal: Owner ID undangan adalah ' . $invitation->user_id . ', sedangkan ID akun Anda yang sedang login adalah ' . (auth()->id() ?? 'tidak login'));
         }
 
@@ -406,7 +406,7 @@ class InvitationController extends Controller
     public function addGuest(Request $request, Invitation $invitation)
     {
         // Ensure user owns this invitation
-        if ($invitation->user_id !== auth()->id()) {
+        if ((int)$invitation->user_id !== (int)auth()->id()) {
             abort(403);
         }
 
@@ -428,7 +428,7 @@ class InvitationController extends Controller
     public function updateGuests(Request $request, Invitation $invitation)
     {
         // Ensure user owns this invitation
-        if ($invitation->user_id !== auth()->id()) {
+        if ((int)$invitation->user_id !== (int)auth()->id()) {
             abort(403);
         }
 
@@ -465,7 +465,7 @@ class InvitationController extends Controller
     public function sendWhatsApp(Invitation $invitation, Guest $guest)
     {
         // Ensure user owns this invitation
-        if ($invitation->user_id !== auth()->id()) {
+        if ((int)$invitation->user_id !== (int)auth()->id()) {
             abort(403, 'Gagal: Anda bukan pemilik undangan ini.');
         }
 
@@ -551,7 +551,7 @@ class InvitationController extends Controller
     public function deleteGuest(Invitation $invitation, Guest $guest)
     {
         // Ensure user owns this invitation
-        if ($invitation->user_id !== auth()->id()) {
+        if ((int)$invitation->user_id !== (int)auth()->id()) {
             abort(403, 'Gagal: Anda bukan pemilik undangan ini.');
         }
 
