@@ -40,6 +40,13 @@ class InvitationController extends Controller
                 $data['cover_photo'] = $request->cover_photo;
             }
 
+            if ($request->hasFile('bg_music_file')) {
+                $path = $request->file('bg_music_file')->store('musics', 'public');
+                $data['bg_music'] = $path;
+            } else {
+                $data['bg_music'] = $request->bg_music;
+            }
+
             $invitation = Invitation::create($data);
 
             // 2. Mempelai
@@ -149,6 +156,13 @@ class InvitationController extends Controller
                 $data['cover_photo'] = $path;
             } else {
                 $data['cover_photo'] = $request->cover_photo;
+            }
+
+            if ($request->hasFile('bg_music_file')) {
+                $path = $request->file('bg_music_file')->store('musics', 'public');
+                $data['bg_music'] = $path;
+            } else {
+                $data['bg_music'] = $request->bg_music;
             }
 
             $invitation->update($data);
@@ -381,7 +395,7 @@ class InvitationController extends Controller
     {
         // Ensure user owns this invitation
         if ($invitation->user_id !== auth()->id()) {
-            abort(403);
+            abort(403, 'Gagal: Owner ID undangan adalah ' . $invitation->user_id . ', sedangkan ID akun Anda yang sedang login adalah ' . (auth()->id() ?? 'tidak login'));
         }
 
         $invitation->load(['guests', 'wishes']);

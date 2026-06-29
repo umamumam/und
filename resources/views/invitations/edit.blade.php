@@ -178,10 +178,14 @@
                         </div>
                         <div class="col-12">
                             <label class="form-label">Musik Latar (Link MP3)</label>
-                            <div class="input-group">
+                            <div class="input-group mb-2">
                                 <span class="input-group-text bg-light"><i class="ti ti-music"></i></span>
                                 <input type="text" name="bg_music" class="form-control"
-                                    value="{{ $invitation->bg_music }}" placeholder="https://...">
+                                    value="{{ $invitation->bg_music }}" placeholder="https://... (Gunakan Link)">
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="ti ti-upload"></i></span>
+                                <input type="file" name="bg_music_file" class="form-control" accept="audio/*">
                             </div>
                         </div>
                         <div class="col-12">
