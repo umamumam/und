@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invitation;
+use App\Models\Guest;
 use Illuminate\Http\Request;
 
 class InvitationController extends Controller
@@ -445,7 +446,10 @@ class InvitationController extends Controller
 
                     $invitation->guests()->updateOrCreate(
                         ['id' => $guestData['id'] ?? null],
-                        ['name' => $guestData['name']]
+                        [
+                            'name' => $guestData['name'],
+                            'whatsapp' => $guestData['whatsapp'] ?? null,
+                        ]
                     );
                 }
             }
@@ -456,5 +460,114 @@ class InvitationController extends Controller
             \DB::rollback();
             return back()->with('error', 'Gagal memperbarui daftar tamu: ' . $e->getMessage());
         }
+    }
+
+    public function sendWhatsApp(Invitation $invitation, Guest $guest)
+    {
+        // Ensure user owns this invitation
+        if ($invitation->user_id !== auth()->id()) {
+            abort(403, 'Gagal: Anda bukan pemilik undangan ini.');
+        }
+
+        if (empty($guest->whatsapp)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nomor WhatsApp tamu kosong.'
+            ], 400);
+        }
+
+        // Format phone number to international if starts with 0
+        $phone = $guest->whatsapp;
+        if (str_starts_with($phone, '0')) {
+            $phone = '62' . substr($phone, 1);
+        }
+        // Remove non-numeric characters
+        $phone = preg_replace('/[^0-9]/', '', $phone);
+
+        // Construct the message
+        $slug = $invitation->slug;
+        $guestName = $guest->name;
+        
+        // Link template
+        // e.g. https://menatamomen.my.id/v/jonathansariul?to=Miftahul+Umam
+        $link = route('invitation.show', $slug) . '?to=' . urlencode($guestName);
+
+        $message = "*_Assalamualaikum Warahmatullahi Wabarakatuh_*\n\n" .
+                   "Kepada Yth.\n" .
+                   "Bapak/Ibu/Saudara/i\n" .
+                   "*" . $guestName . "*\n\n" .
+                   "Dengan memohon Rahmat dan Ridho Allah SWT, dalam membentuk keluarga yang sakinah, mawaddah, warrahmah.\n" .
+                   "Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri acara kami.\n\n" .
+                   "*Berikut link undangan kami*,\n" .
+                   "Untuk info lengkap dari acara bisa kunjungi :\n\n" .
+                   $link . "\n\n" .
+                   "Merupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan untuk hadir dan memberikan doa restu.\n\n" .
+                   "Mohon maaf atas keterbatasan kami dalam menyampaikan undangan lewat media ini.\n\n" .
+                   "Terima kasih banyak atas perhatiannya.\n\n" .
+                   "*_Wassalamualaikum Warahmatullahi Wabarakatuh_*";
+
+        // Call Fonnte API
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.fonnte.com/send',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => array(
+                'target' => $phone,
+                'message' => $message,
+            ),
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: ' . config('services.fonnte.token')
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+        curl_close($curl);
+
+        if ($err) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengirim pesan: ' . $err
+            ], 500);
+        }
+
+        $resDecoded = json_decode($response, true);
+        if (isset($resDecoded['status']) && $resDecoded['status'] == true) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Undangan berhasil dikirim via WhatsApp ke ' . $guest->name
+            ]);
+        } else {
+            $msg = $resDecoded['reason'] ?? 'Gagal mengirim melalui Fonnte API.';
+            return response()->json([
+                'success' => false,
+                'message' => 'Fonnte Error: ' . $msg
+            ], 400);
+        }
+    }
+
+    public function deleteGuest(Invitation $invitation, Guest $guest)
+    {
+        // Ensure user owns this invitation
+        if ($invitation->user_id !== auth()->id()) {
+            abort(403, 'Gagal: Anda bukan pemilik undangan ini.');
+        }
+
+        // Ensure this guest belongs to the invitation
+        if ($guest->invitation_id !== $invitation->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tamu tidak terasosiasi dengan undangan ini.'
+            ], 400);
+        }
+
+        $guest->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Tamu ' . $guest->name . ' berhasil dihapus.'
+        ]);
     }
 }

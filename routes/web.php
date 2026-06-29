@@ -27,6 +27,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/wishes/{invitation}', [InvitationController::class, 'wishesDetail'])->name('wishes.show');
     Route::post('/wishes/{invitation}/add-guest', [InvitationController::class, 'addGuest'])->name('wishes.add-guest');
     Route::post('/wishes/{invitation}/update-guests', [InvitationController::class, 'updateGuests'])->name('wishes.update-guests');
+    Route::post('/wishes/{invitation}/send-wa/{guest}', [InvitationController::class, 'sendWhatsApp'])->name('wishes.send-wa');
+    Route::delete('/wishes/{invitation}/delete-guest/{guest}', [InvitationController::class, 'deleteGuest'])->name('wishes.delete-guest');
 });
 
 require __DIR__ . '/auth.php';

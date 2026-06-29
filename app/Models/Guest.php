@@ -9,6 +9,7 @@ class Guest extends Model
     protected $fillable = [
         'invitation_id',
         'name',
+        'whatsapp',
         'attendance',
         'message',
         'guest_count',
