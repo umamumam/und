@@ -336,7 +336,7 @@ class InvitationController extends Controller
         $groom = $invitation->couples->where('gender', 'male')->first();
         $bride = $invitation->couples->where('gender', 'female')->first();
 
-        return view('hehe', compact('invitation', 'groom', 'bride'));
+        return view('test', compact('invitation', 'groom', 'bride'));
     }
 
     public function storeWish(Request $request, $slug)
@@ -428,7 +428,7 @@ class InvitationController extends Controller
             if ($request->guests) {
                 foreach ($request->guests as $guestData) {
                     if (empty($guestData['name'])) continue;
-                    
+
                     $invitation->guests()->updateOrCreate(
                         ['id' => $guestData['id'] ?? null],
                         ['name' => $guestData['name']]
