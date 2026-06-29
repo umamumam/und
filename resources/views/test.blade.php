@@ -5273,7 +5273,7 @@
               data-settings="{&quot;_animation&quot;:&quot;fadeInDown&quot;,&quot;_animation_delay&quot;:400}"
               data-widget_type="heading.default">
               <h2 class="elementor-heading-title elementor-size-default"
-                style="font-family: 'Tangerine', cursive !important; font-size: 70px !important; font-weight: 700 !important; line-height: 1.1 !important;">
+                style="font-family: 'Tangerine', cursive !important; font-size: 50px !important; font-weight: 700 !important; line-height: 1.1 !important;">
                 {{ $groom->nickname }} &amp; {{
                 $bride->nickname }}</h2>
             </div>
