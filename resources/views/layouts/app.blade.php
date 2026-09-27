@@ -63,7 +63,7 @@
                 <div class="col-12">
                     <footer class="text-center py-2 mt-6 text-secondary ">
                         <p class="mb-0">Copyright © 2026 {{ config('app.name') }}. Developed by <a href="#"
-                                target="_blank" class="text-primary">CodesCandy</a></p>
+                                target="_blank" class="text-primary">mfthlmm</a></p>
                     </footer>
                 </div>
             </div>

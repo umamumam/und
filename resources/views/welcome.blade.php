@@ -748,15 +748,15 @@
             <div class="footer-links">
                 <h4>Kontak</h4>
                 <p style="color:#aaa; font-size:0.9rem; margin-bottom:10px;"><i class="ti ti-mail"></i>
-                    halo@undangkita.id</p>
-                <p style="color:#aaa; font-size:0.9rem; margin-bottom:10px;"><i class="ti ti-phone"></i> +62 812 3456
-                    7890</p>
-                <p style="color:#aaa; font-size:0.9rem;"><i class="ti ti-map-pin"></i> Jakarta, Indonesia</p>
+                    miftahulumam862@gmail.com</p>
+                <p style="color:#aaa; font-size:0.9rem; margin-bottom:10px;"><i class="ti ti-phone"></i> +6285799352991
+                </p>
+                <p style="color:#aaa; font-size:0.9rem;"><i class="ti ti-map-pin"></i> Ds. Ngablak, Cluwak, Pati</p>
             </div>
         </div>
         <div class="footer-bottom">
             <p>&copy; 2026 UndangKita. All rights reserved. Crafted with <i class="ti ti-heart"
-                    style="color:var(--accent);"></i> by {{ config('app.name') }} Team.</p>
+                    style="color:var(--accent);"></i> by mfthlmm.</p>
         </div>
     </footer>
 

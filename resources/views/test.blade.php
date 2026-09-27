@@ -4864,38 +4864,27 @@
                         </div>
                       </div>
                     </div>
-                    <div id="wpd-threads" class="wpd-thread-wrapper">
-                      <div class="wpd-thread-head">
-                        <div class="wpd-thread-info " data-comments-count="{{ $invitation->wishes->count() }}">
-                          <span class='wpdtc' title='{{ $invitation->wishes->count() }}'>{{ $invitation->wishes->count()
-                            }}</span> Comments
-                        </div>
-                        <div class="wpd-space"></div>
-                        <div class="wpd-thread-filter">
-                        </div>
-                      </div>
-                      <div class="wpd-comment-info-bar">
-                        <div class="wpd-current-view"><i class="fas fa-quote-left"></i> Inline Feedbacks </div>
-                        <div class="wpd-filter-view-all">View all comments</div>
-                      </div>
+                    <div id="wpd-threads" class="wpd-thread-wrapper" style="margin-top: 15px;">
                       <div class="wpd-thread-list">
-                        @foreach($invitation->wishes as $wish)
-                        <div class="wpd-comment wpd-comment-right"
-                          style="background: rgba(255,255,255,0.9); padding: 20px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-left: 5px solid #a27026;">
-                          <div class="wpd-comment-header"
-                            style="display: flex; align-items: center; margin-bottom: 10px;">
-                            <div class="wpd-comment-author"
-                              style="font-weight: 700; color: #a27026; font-size: 17px; font-family: 'Poppins', sans-serif;">
-                              {{ $wish->name }}</div>
-                            <div style="margin-left: auto; font-size: 12px; color: #999;">{{
-                              $wish->created_at->diffForHumans() }}</div>
+                        @forelse($invitation->wishes as $wish)
+                        <div class="wish-item">
+                          <div class="wish-header">
+                            <div class="wish-author">
+                              <i class="far fa-user-circle" style="margin-right: 6px; opacity: 0.85;"></i>{{ $wish->name }}
+                            </div>
+                            <div class="wpd-comment-date wish-date">
+                              {{ $wish->created_at->diffForHumans() }}
+                            </div>
                           </div>
-                          <div class="wpd-comment-text"
-                            style="font-size: 15px; color: #555; line-height: 1.7; font-family: 'Inria Sans', sans-serif;">
+                          <div class="wish-message">
                             {{ $wish->message }}
                           </div>
                         </div>
-                        @endforeach
+                        @empty
+                        <div style="text-align: center; padding: 25px 0; color: rgba(255, 255, 255, 0.7); font-style: italic; font-size: 13px; font-family: var(--gc-font-ucapan);">
+                          Belum ada ucapan doa. Jadilah yang pertama memberikan ucapan &amp; doa!
+                        </div>
+                        @endforelse
                       </div>
                     </div>
                   </div>
@@ -5031,16 +5020,73 @@
                   font-family: "Plus Jakarta Sans", Sans-Serif;
                 }
 
-                /* Comment bubble styling */
-                #wpdcom .wpd-comment .wpd-comment-right {
-                  /*background-color: rgba(255, 255, 255, 0.72) !important;*/
-                  background-color: white;
-                   !important;
-                  padding: 5px 15px;
+                /* Hide unneeded thread head and info bar */
+                #wpdcom .wpd-comment-info-bar,
+                #wpdcom .wpd-thread-head {
+                  display: none !important;
+                }
+
+                /* Modern neat comment list */
+                #wpdcom .wpd-thread-list {
+                  padding: 5px 0px;
+                  max-height: 480px;
+                  min-height: 0px;
+                  overflow-y: auto;
+                  scrollbar-width: thin;
+                  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+                }
+
+                #wpdcom .wpd-thread-list::-webkit-scrollbar {
+                  width: 4px;
+                }
+                #wpdcom .wpd-thread-list::-webkit-scrollbar-track {
+                  background: rgba(255, 255, 255, 0.05);
+                }
+                #wpdcom .wpd-thread-list::-webkit-scrollbar-thumb {
+                  background: rgba(255, 255, 255, 0.25);
+                  border-radius: 4px;
+                }
+
+                .wish-item {
+                  padding: 13px 4px;
+                  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+                  transition: background-color 0.2s ease;
+                }
+
+                .wish-item:last-child {
+                  border-bottom: none;
+                }
+
+                .wish-header {
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: baseline;
                   margin-bottom: 5px;
-                  border-radius: 10px;
-                  width: 100%;
-                  border-bottom: 4px solid #3d5648;
+                }
+
+                .wish-author {
+                  font-weight: 700;
+                  color: #ffffff !important;
+                  font-size: 15px !important;
+                  font-family: var(--gc-font-ucapan);
+                  letter-spacing: 0.3px;
+                }
+
+                .wish-date {
+                  font-size: 11px;
+                  color: rgba(255, 255, 255, 0.65) !important;
+                  font-style: italic;
+                  font-family: var(--gc-font-ucapan);
+                  margin-left: 8px;
+                  white-space: nowrap;
+                }
+
+                .wish-message {
+                  font-size: 14px;
+                  color: rgba(255, 255, 255, 0.92) !important;
+                  line-height: 1.6;
+                  font-family: var(--gc-font-ucapan);
+                  word-break: break-word;
                 }
 
                 /* Styling for comments */
@@ -5054,14 +5100,6 @@
 
                 #wpdcom .wpd-form-head {
                   display: none !important;
-                }
-
-                /* Overflow control for thread list */
-                #wpdcom .wpd-thread-list {
-                  padding: 0px;
-                  max-height: 700px;
-                  min-height: 0px;
-                  overflow: auto;
                 }
 
                 /* PC-specific styles */
@@ -5093,7 +5131,7 @@
                 }
 
                 #wpdcom .wpd-comment-text {
-                  color: #851111 !important;
+                  color: rgba(255, 255, 255, 0.92) !important;
                   font-size: 14px;
                   font-family: var(--gc-font-ucapan);
                 }
