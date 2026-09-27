@@ -38,7 +38,10 @@
                             @foreach($invitations as $invitation)
                             <tr>
                                 <td class="px-4">
-                                    <div class="fw-bold">{{ $invitation->title }}</div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="badge bg-light text-dark border">#{{ $invitation->id }}</span>
+                                        <span class="fw-bold">{{ $invitation->title }}</span>
+                                    </div>
                                     <small class="text-muted">Slug: {{ $invitation->slug }}</small>
                                 </td>
                                 <td class="px-4">
@@ -58,6 +61,12 @@
                                         <a href="{{ route('invitations.edit', $invitation->id) }}" class="btn btn-sm btn-icon btn-outline-primary rounded-circle" title="Edit">
                                             <i class="ti ti-edit"></i>
                                         </a>
+                                        <form action="{{ route('invitations.clone', $invitation->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Duplikat undangan ini menjadi undangan baru?')">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-icon btn-outline-success rounded-circle" title="Duplikat / Clone Undangan">
+                                                <i class="ti ti-copy"></i>
+                                            </button>
+                                        </form>
                                         <form action="{{ route('invitations.destroy', $invitation->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus?')">
                                             @csrf
                                             @method('DELETE')

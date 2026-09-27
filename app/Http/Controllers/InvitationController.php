@@ -535,6 +535,7 @@ class InvitationController extends Controller
 
         $resDecoded = json_decode($response, true);
         if (isset($resDecoded['status']) && $resDecoded['status'] == true) {
+            $guest->update(['is_wa_sent' => true]);
             return response()->json([
                 'success' => true,
                 'message' => 'Undangan berhasil dikirim via WhatsApp ke ' . $guest->name
@@ -546,6 +547,30 @@ class InvitationController extends Controller
                 'message' => 'Fonnte Error: ' . $msg
             ], 400);
         }
+    }
+
+    public function markWaSent(Request $request, Invitation $invitation, Guest $guest)
+    {
+        // Ensure user owns this invitation
+        if ((int)$invitation->user_id !== (int)auth()->id()) {
+            abort(403, 'Gagal: Anda bukan pemilik undangan ini.');
+        }
+
+        if ($guest->invitation_id !== $invitation->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tamu tidak terasosiasi dengan undangan ini.'
+            ], 400);
+        }
+
+        $newStatus = $request->has('status') ? (bool)$request->status : true;
+        $guest->update(['is_wa_sent' => $newStatus]);
+
+        return response()->json([
+            'success' => true,
+            'message' => $newStatus ? 'Status undangan ditandai sudah dikirim ke WhatsApp.' : 'Status undangan ditandai belum dikirim.',
+            'is_wa_sent' => $guest->is_wa_sent,
+        ]);
     }
 
     public function deleteGuest(Invitation $invitation, Guest $guest)
@@ -569,5 +594,76 @@ class InvitationController extends Controller
             'success' => true,
             'message' => 'Tamu ' . $guest->name . ' berhasil dihapus.'
         ]);
+    }
+
+    public function clone(Invitation $invitation)
+    {
+        \DB::beginTransaction();
+        try {
+            // Eager load all related records
+            $invitation->load(['couples', 'events', 'loveStories', 'galleries', 'gifts']);
+
+            // Replicate main invitation
+            $newInvitation = $invitation->replicate();
+
+            // Generate unique slug
+            $baseSlug = $invitation->slug . '-copy';
+            $slug = $baseSlug;
+            $counter = 1;
+            while (Invitation::where('slug', $slug)->exists()) {
+                $counter++;
+                $slug = $baseSlug . '-' . $counter;
+            }
+
+            $newInvitation->slug = $slug;
+            $newInvitation->title = $invitation->title . ' (Copy)';
+            $newInvitation->user_id = auth()->id() ?? $invitation->user_id;
+            $newInvitation->created_at = now();
+            $newInvitation->updated_at = now();
+            $newInvitation->save();
+
+            // 1. Replicate couples
+            foreach ($invitation->couples as $couple) {
+                $newCouple = $couple->replicate();
+                $newCouple->invitation_id = $newInvitation->id;
+                $newCouple->save();
+            }
+
+            // 2. Replicate events
+            foreach ($invitation->events as $event) {
+                $newEvent = $event->replicate();
+                $newEvent->invitation_id = $newInvitation->id;
+                $newEvent->save();
+            }
+
+            // 3. Replicate love stories
+            foreach ($invitation->loveStories as $story) {
+                $newStory = $story->replicate();
+                $newStory->invitation_id = $newInvitation->id;
+                $newStory->save();
+            }
+
+            // 4. Replicate galleries
+            foreach ($invitation->galleries as $gallery) {
+                $newGallery = $gallery->replicate();
+                $newGallery->invitation_id = $newInvitation->id;
+                $newGallery->save();
+            }
+
+            // 5. Replicate gifts
+            foreach ($invitation->gifts as $gift) {
+                $newGift = $gift->replicate();
+                $newGift->invitation_id = $newInvitation->id;
+                $newGift->save();
+            }
+
+            \DB::commit();
+
+            return redirect()->route('invitations.index')
+                ->with('success', "Undangan berhasil diduplikat! (ID baru: #{$newInvitation->id}, Slug: {$newInvitation->slug}). Tampilan sama persis, Anda bisa mengedit link (slug), judul, atau daftar rekening jika diperlukan.");
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            return back()->with('error', 'Gagal menduplikat undangan: ' . $e->getMessage());
+        }
     }
 }

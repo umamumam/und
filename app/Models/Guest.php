@@ -13,7 +13,13 @@ class Guest extends Model
         'attendance',
         'message',
         'guest_count',
-        'is_opened'
+        'is_opened',
+        'is_wa_sent',
+    ];
+
+    protected $casts = [
+        'is_opened' => 'boolean',
+        'is_wa_sent' => 'boolean',
     ];
 
     public function invitation()

@@ -173,9 +173,15 @@
                                                 <button class="btn btn-outline-secondary border-0 copy-link" type="button" title="Copy Link"><i class="ti ti-copy"></i></button>
                                             </div>
                                             @if($guest->id)
-                                                <button type="button" class="btn btn-sm btn-success rounded-pill px-2 send-wa-btn" data-guest-id="{{ $guest->id }}" title="Kirim otomatis lewat Fonnte WA">
-                                                    <i class="ti ti-brand-whatsapp"></i> Fonnte
-                                                </button>
+                                                @if($guest->is_wa_sent)
+                                                    <button type="button" class="btn btn-sm btn-secondary rounded-pill px-2 send-wa-btn" data-guest-id="{{ $guest->id }}" title="Sudah dikirim via WA">
+                                                        <i class="ti ti-check"></i> Sent
+                                                    </button>
+                                                @else
+                                                    <button type="button" class="btn btn-sm btn-success rounded-pill px-2 send-wa-btn" data-guest-id="{{ $guest->id }}" title="Kirim otomatis lewat Fonnte WA">
+                                                        <i class="ti ti-brand-whatsapp"></i> Fonnte
+                                                    </button>
+                                                @endif
                                                 @php
                                                     $formattedPhone = $guest->whatsapp;
                                                     if (str_starts_with($formattedPhone, '0')) {
@@ -185,9 +191,21 @@
                                                     
                                                     $waText = "*_Assalamualaikum Warahmatullahi Wabarakatuh_*\n\nKepada Yth.\nBapak/Ibu/Saudara/i\n*" . $guest->name . "*\n\nDengan memohon Rahmat dan Ridho Allah SWT, dalam membentuk keluarga yang sakinah, mawaddah, warrahmah. Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri acara kami.\n\n*Berikut link undangan kami*,\nUntuk info lengkap dari acara bisa kunjungi :\n\n" . route('invitation.show', $invitation->slug) . "?to=" . urlencode($guest->name) . "\n\nMerupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan untuk hadir dan memberikan doa restu. Mohon maaf atas keterbatasan kami dalam menyampaikan undangan lewat media ini. Terima kasih banyak atas perhatiannya.\n\n*_Wassalamualaikum Warahmatullahi Wabarakatuh_*";
                                                 @endphp
-                                                <a href="https://api.whatsapp.com/send?phone={{ $formattedPhone }}&text={{ urlencode($waText) }}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-2 manual-wa-btn" title="Kirim manual lewat Web WhatsApp">
-                                                    <i class="ti ti-external-link"></i> WA Manual
-                                                </a>
+                                                @if($guest->is_wa_sent)
+                                                    <a href="https://api.whatsapp.com/send?phone={{ $formattedPhone }}&text={{ urlencode($waText) }}" target="_blank" class="btn btn-sm btn-success text-white rounded-pill px-2 manual-wa-btn is-sent shadow-sm" data-guest-id="{{ $guest->id }}" title="Sudah dibuka di WA (Aktif). Klik untuk buka ulang WA.">
+                                                        <i class="ti ti-check"></i> Sudah WA
+                                                    </a>
+                                                    <button type="button" class="btn btn-sm btn-link text-muted p-0 ms-1 reset-wa-btn" data-guest-id="{{ $guest->id }}" title="Reset status: Jadikan belum dikirim">
+                                                        <i class="ti ti-rotate-clockwise" style="font-size: 1.1rem;"></i>
+                                                    </button>
+                                                @else
+                                                    <a href="https://api.whatsapp.com/send?phone={{ $formattedPhone }}&text={{ urlencode($waText) }}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-2 manual-wa-btn" data-guest-id="{{ $guest->id }}" title="Kirim manual lewat Web WhatsApp">
+                                                        <i class="ti ti-brand-whatsapp"></i> WA Manual
+                                                    </a>
+                                                    <button type="button" class="btn btn-sm btn-link text-muted p-0 ms-1 reset-wa-btn d-none" data-guest-id="{{ $guest->id }}" title="Reset status: Jadikan belum dikirim">
+                                                        <i class="ti ti-rotate-clockwise" style="font-size: 1.1rem;"></i>
+                                                    </button>
+                                                @endif
                                             @else
                                                 <small class="text-muted italic">Simpan untuk kirim</small>
                                             @endif
@@ -424,6 +442,18 @@
                         btn.classList.remove('btn-success');
                         btn.classList.add('btn-secondary');
                         btn.innerHTML = '<i class="ti ti-check"></i> Sent';
+
+                        // Sync manual WA button
+                        const parent = btn.parentElement;
+                        const manualBtn = parent.querySelector('.manual-wa-btn');
+                        if (manualBtn) {
+                            manualBtn.classList.remove('btn-outline-success');
+                            manualBtn.classList.add('btn-success', 'text-white', 'is-sent', 'shadow-sm');
+                            manualBtn.innerHTML = '<i class="ti ti-check"></i> Sudah WA';
+                            manualBtn.setAttribute('title', 'Sudah dibuka di WA (Aktif). Klik untuk buka ulang WA.');
+                        }
+                        const resetBtn = parent.querySelector('.reset-wa-btn');
+                        if (resetBtn) resetBtn.classList.remove('d-none');
                     } else {
                         Swal.fire('Gagal!', data.message || 'Gagal mengirim pesan.', 'error');
                         btn.innerHTML = originalHtml;
@@ -488,6 +518,17 @@
                                     btn.classList.remove('btn-success');
                                     btn.classList.add('btn-secondary');
                                     btn.innerHTML = '<i class="ti ti-check"></i> Sent';
+
+                                    const parent = btn.parentElement;
+                                    const manualBtn = parent.querySelector('.manual-wa-btn');
+                                    if (manualBtn) {
+                                        manualBtn.classList.remove('btn-outline-success');
+                                        manualBtn.classList.add('btn-success', 'text-white', 'is-sent', 'shadow-sm');
+                                        manualBtn.innerHTML = '<i class="ti ti-check"></i> Sudah WA';
+                                        manualBtn.setAttribute('title', 'Sudah dibuka di WA (Aktif). Klik untuk buka ulang WA.');
+                                    }
+                                    const resetBtn = parent.querySelector('.reset-wa-btn');
+                                    if (resetBtn) resetBtn.classList.remove('d-none');
                                 } else {
                                     btn.innerHTML = originalHtml;
                                     btn.disabled = false;
@@ -509,6 +550,79 @@
                     Swal.fire('Sukses!', 'Proses pengiriman massal selesai.', 'success');
                 }
             });
+        });
+
+        // Handle Click WA Manual (Transforms to Active & persists to DB)
+        document.addEventListener('click', function(e) {
+            const manualBtn = e.target.closest('.manual-wa-btn');
+            if (manualBtn) {
+                const guestId = manualBtn.getAttribute('data-guest-id');
+                if (!guestId) return;
+
+                // Transform visual to Active (solid green with checkmark)
+                manualBtn.classList.remove('btn-outline-success');
+                manualBtn.classList.add('btn-success', 'text-white', 'is-sent', 'shadow-sm');
+                manualBtn.innerHTML = '<i class="ti ti-check"></i> Sudah WA';
+                manualBtn.setAttribute('title', 'Sudah dibuka di WA (Aktif). Klik untuk buka ulang WA.');
+
+                const parent = manualBtn.parentElement;
+                const resetBtn = parent.querySelector('.reset-wa-btn');
+                if (resetBtn) resetBtn.classList.remove('d-none');
+
+                const fonnteBtn = parent.querySelector('.send-wa-btn');
+                if (fonnteBtn) {
+                    fonnteBtn.classList.remove('btn-success');
+                    fonnteBtn.classList.add('btn-secondary');
+                    fonnteBtn.innerHTML = '<i class="ti ti-check"></i> Sent';
+                }
+
+                // Send background AJAX to update database
+                fetch(`/wishes/{{ $invitation->id }}/mark-wa-sent/${guestId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ status: 1 })
+                }).catch(err => console.error('Error marking WA sent:', err));
+            }
+
+            // Handle Reset WA Status
+            const resetBtn = e.target.closest('.reset-wa-btn');
+            if (resetBtn) {
+                e.preventDefault();
+                const guestId = resetBtn.getAttribute('data-guest-id');
+                if (!guestId) return;
+
+                const parent = resetBtn.parentElement;
+                const manualBtn = parent.querySelector('.manual-wa-btn');
+                const fonnteBtn = parent.querySelector('.send-wa-btn');
+
+                if (manualBtn) {
+                    manualBtn.classList.remove('btn-success', 'text-white', 'is-sent', 'shadow-sm');
+                    manualBtn.classList.add('btn-outline-success');
+                    manualBtn.innerHTML = '<i class="ti ti-brand-whatsapp"></i> WA Manual';
+                    manualBtn.setAttribute('title', 'Kirim manual lewat Web WhatsApp');
+                }
+
+                if (fonnteBtn) {
+                    fonnteBtn.classList.remove('btn-secondary');
+                    fonnteBtn.classList.add('btn-success');
+                    fonnteBtn.innerHTML = '<i class="ti ti-brand-whatsapp"></i> Fonnte';
+                }
+
+                resetBtn.classList.add('d-none');
+
+                // Send background AJAX to update database
+                fetch(`/wishes/{{ $invitation->id }}/mark-wa-sent/${guestId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ status: 0 })
+                }).catch(err => console.error('Error unmarking WA sent:', err));
+            }
         });
     });
 </script>
