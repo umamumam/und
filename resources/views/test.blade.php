@@ -4254,32 +4254,25 @@
                   </span>
                 </a>
               </div>
-              <div class="elementor-element elementor-element-5e001db7 e-con-full area-gift-card e-flex e-con e-child"
+              <div class="elementor-element elementor-element-5e001db7 e-con-full area-gift-card is-open e-flex e-con e-child"
                 data-id="5e001db7" data-element_type="container" data-e-type="container">
                 <div class="elementor-element elementor-element-189a473b elementor-widget elementor-widget-html"
                   data-id="189a473b" data-element_type="widget" data-e-type="widget" data-widget_type="html.default">
                   <style>
                     .area-gift-card {
-                      max-height: 0;
-                      opacity: 0;
-                      overflow: hidden;
-                      transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+                      max-height: none !important;
+                      opacity: 1 !important;
+                      overflow: visible !important;
+                      margin-top: 25px;
                     }
 
-                    .area-gift-card.is-open {
-                      max-height: 2000px;
-                      opacity: 1;
+                    .toggle-gift {
+                      display: none !important;
                     }
 
                     .card-info {
-                      opacity: 0;
-                      transform: translateY(30px);
-                      transition: all 0.6s ease-out;
-                    }
-
-                    .area-gift-card.is-open .card-info {
-                      opacity: 1;
-                      transform: translateY(0);
+                      opacity: 1 !important;
+                      transform: none !important;
                     }
 
                     .toggle-gift {
@@ -4464,25 +4457,11 @@
                     jQuery(document).ready(function ($) {
 
                       $('.area-gift-card .card-info').each(function (index) {
-                        var delay = 0.1 + (index * 0.3);
-                        $(this).css('transition-delay', delay + 's');
+                        $(this).css({
+                          'opacity': '1',
+                          'transform': 'none'
+                        });
                       });
-
-                      var $button = $('.toggle-gift');
-                      var $content = $('.area-gift-card');
-
-                      $button.on('click', function (e) {
-                        e.preventDefault();
-
-                        $content.toggleClass('is-open');
-
-                        var $text = $button.find('.elementor-button-text').length
-                          ? $button.find('.elementor-button-text')
-                          : $button;
-
-                        $text.text($content.hasClass('is-open') ? 'SEMBUNYIKAN' : 'TAMPILKAN');
-                      });
-
                     });
                   </script>
                 </div>
