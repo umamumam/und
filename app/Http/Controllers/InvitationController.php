@@ -121,6 +121,9 @@ class InvitationController extends Controller
             // 6. Gifts
             if ($request->gifts) {
                 foreach ($request->gifts as $giftData) {
+                    if (empty($giftData['bank_name']) && empty($giftData['account_name']) && empty($giftData['account_number'])) {
+                        continue;
+                    }
                     $invitation->gifts()->create([
                         'bank_name' => $giftData['bank_name'] ?? '',
                         'account_name' => $giftData['account_name'] ?? '',
@@ -202,12 +205,16 @@ class InvitationController extends Controller
             $invitation->coupleBride()->update($brideData);
 
             // 3. Events
-            if ($request->delete_events) {
-                $invitation->events()->whereIn('id', $request->delete_events)->delete();
+            $deleteEventIds = $request->delete_events ? array_map('strval', (array) $request->delete_events) : [];
+            if (!empty($deleteEventIds)) {
+                $invitation->events()->whereIn('id', $deleteEventIds)->delete();
             }
 
             if ($request->events) {
                 foreach ($request->events as $eventData) {
+                    if (!empty($eventData['id']) && in_array((string)$eventData['id'], $deleteEventIds, true)) {
+                        continue;
+                    }
                     $invitation->events()->updateOrCreate(
                         ['id' => $eventData['id'] ?? null],
                         [
@@ -223,12 +230,17 @@ class InvitationController extends Controller
             }
 
             // 4. Love Stories
-            if ($request->delete_stories) {
-                $invitation->loveStories()->whereIn('id', $request->delete_stories)->delete();
+            $deleteStoryIds = $request->delete_stories ? array_map('strval', (array) $request->delete_stories) : [];
+            if (!empty($deleteStoryIds)) {
+                $invitation->loveStories()->whereIn('id', $deleteStoryIds)->delete();
             }
 
             if ($request->stories) {
                 foreach ($request->stories as $index => $storyData) {
+                    if (!empty($storyData['id']) && in_array((string)$storyData['id'], $deleteStoryIds, true)) {
+                        continue;
+                    }
+
                     $updateData = [
                         'year' => $storyData['year'] ?? '',
                         'title' => $storyData['title'] ?? '',
@@ -262,12 +274,26 @@ class InvitationController extends Controller
             }
 
             // 6. Gifts
-            if ($request->delete_gifts) {
-                $invitation->gifts()->whereIn('id', $request->delete_gifts)->delete();
+            $deleteGiftIds = $request->delete_gifts ? array_map('strval', (array) $request->delete_gifts) : [];
+            if (!empty($deleteGiftIds)) {
+                $invitation->gifts()->whereIn('id', $deleteGiftIds)->delete();
             }
 
             if ($request->gifts) {
                 foreach ($request->gifts as $giftData) {
+                    // Jangan buat/update ulang gift yang sudah dicentang hapus
+                    if (!empty($giftData['id']) && in_array((string)$giftData['id'], $deleteGiftIds, true)) {
+                        continue;
+                    }
+
+                    // Jika semua isian kosong, hapus jika ada ID atau lewati
+                    if (empty($giftData['bank_name']) && empty($giftData['account_name']) && empty($giftData['account_number'])) {
+                        if (!empty($giftData['id'])) {
+                            $invitation->gifts()->where('id', $giftData['id'])->delete();
+                        }
+                        continue;
+                    }
+
                     $invitation->gifts()->updateOrCreate(
                         ['id' => $giftData['id'] ?? null],
                         [
@@ -279,12 +305,16 @@ class InvitationController extends Controller
                 }
             }
 
-            // 6. Guests
-            if ($request->delete_guests) {
-                $invitation->guests()->whereIn('id', $request->delete_guests)->delete();
+            // 7. Guests
+            $deleteGuestIds = $request->delete_guests ? array_map('strval', (array) $request->delete_guests) : [];
+            if (!empty($deleteGuestIds)) {
+                $invitation->guests()->whereIn('id', $deleteGuestIds)->delete();
             }
             if ($request->guests) {
                 foreach ($request->guests as $guestData) {
+                    if (!empty($guestData['id']) && in_array((string)$guestData['id'], $deleteGuestIds, true)) {
+                        continue;
+                    }
                     if (empty($guestData['name'])) continue;
                     $invitation->guests()->updateOrCreate(
                         ['id' => $guestData['id'] ?? null],
@@ -435,13 +465,17 @@ class InvitationController extends Controller
         \DB::beginTransaction();
         try {
             // 1. Delete guests
-            if ($request->delete_guests) {
-                $invitation->guests()->whereIn('id', $request->delete_guests)->delete();
+            $deleteGuestIds = $request->delete_guests ? array_map('strval', (array) $request->delete_guests) : [];
+            if (!empty($deleteGuestIds)) {
+                $invitation->guests()->whereIn('id', $deleteGuestIds)->delete();
             }
 
             // 2. Update/Create guests
             if ($request->guests) {
                 foreach ($request->guests as $guestData) {
+                    if (!empty($guestData['id']) && in_array((string)$guestData['id'], $deleteGuestIds, true)) {
+                        continue;
+                    }
                     if (empty($guestData['name'])) continue;
 
                     $invitation->guests()->updateOrCreate(

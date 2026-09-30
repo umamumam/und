@@ -506,13 +506,18 @@
                     <h4 class="form-section-title">Rekening / Kado Digital</h4>
                     <div id="gifts-container">
                         @foreach($invitation->gifts as $index => $gift)
-                        <div class="border rounded p-3 mb-3 gift-row">
+                        <div class="border rounded p-3 mb-3 gift-row" id="gift-row-{{ $gift->id }}">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="mb-0">Detail Rekening</h5>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="delete_gifts[]"
-                                        value="{{ $gift->id }}">
-                                    <label class="form-check-label text-danger small">Hapus</label>
+                                <div class="d-flex align-items-center gap-2">
+                                    <h5 class="mb-0">Detail Rekening</h5>
+                                    <span class="badge bg-danger-subtle text-danger delete-badge d-none">Akan Dihapus</span>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input delete-gift-checkbox" type="checkbox" name="delete_gifts[]"
+                                        value="{{ $gift->id }}" id="delete_gift_{{ $gift->id }}">
+                                    <label class="form-check-label text-danger small fw-semibold" for="delete_gift_{{ $gift->id }}" style="cursor: pointer;">
+                                        <i class="ti ti-trash"></i> Hapus
+                                    </label>
                                 </div>
                             </div>
                             <div class="row g-3">
@@ -520,17 +525,17 @@
                                 <div class="col-md-4">
                                     <label class="form-label">Bank / Provider</label>
                                     <input type="text" name="gifts[{{ $index }}][bank_name]" class="form-control"
-                                        value="{{ $gift->bank_name }}">
+                                        value="{{ $gift->bank_name }}" placeholder="Contoh: BCA, Mandiri, Dana">
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Atas Nama</label>
                                     <input type="text" name="gifts[{{ $index }}][account_name]" class="form-control"
-                                        value="{{ $gift->account_name }}">
+                                        value="{{ $gift->account_name }}" placeholder="Nama Pemilik">
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Nomor Rekening</label>
                                     <input type="text" name="gifts[{{ $index }}][account_number]" class="form-control"
-                                        value="{{ $gift->account_number }}">
+                                        value="{{ $gift->account_number }}" placeholder="Nomor Rekening">
                                 </div>
                             </div>
                         </div>
@@ -595,7 +600,7 @@
                                     </td>
                                     <td>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="delete_guests[]"
+                                            <input class="form-check-input delete-guest-checkbox" type="checkbox" name="delete_guests[]"
                                                 value="{{ $guest->id }}">
                                         </div>
                                     </td>
@@ -846,6 +851,71 @@
                 slugInput.value = slug;
             });
         }
+
+        // Toast feedback helper
+        function showToast(message, type = 'info') {
+            if (typeof window.showToast === 'function') {
+                window.showToast(message, type);
+                return;
+            }
+            let container = document.getElementById('toast-feedback-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toast-feedback-container';
+                container.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;';
+                document.body.appendChild(container);
+            }
+            const toast = document.createElement('div');
+            const isWarn = type === 'warning';
+            toast.style.cssText = `background:${isWarn ? '#fff3cd' : '#d1ecf1'};color:${isWarn ? '#856404' : '#0c5460'};border:1px solid ${isWarn ? '#ffeeba' : '#bee5eb'};padding:10px 16px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.1);font-size:13px;pointer-events:auto;transition:all 0.3s ease;`;
+            toast.innerHTML = `<i class="ti ${isWarn ? 'ti-alert-circle' : 'ti-info-circle'} me-1"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+
+        // Delete Checkbox Change Handler (Gifts & Guests)
+        document.addEventListener('change', function(e) {
+            if (e.target.matches('.delete-gift-checkbox')) {
+                const checkbox = e.target;
+                const row = checkbox.closest('.gift-row');
+                if (!row) return;
+
+                const badge = row.querySelector('.delete-badge');
+                if (checkbox.checked) {
+                    row.style.transition = 'all 0.3s ease';
+                    row.style.opacity = '0.5';
+                    row.style.filter = 'grayscale(0.8)';
+                    row.classList.add('border-danger', 'bg-light');
+                    if (badge) badge.classList.remove('d-none');
+                    showToast('Rekening ditandai untuk dihapus. Klik Simpan Perubahan untuk menerapkan.', 'warning');
+                } else {
+                    row.style.opacity = '1';
+                    row.style.filter = 'none';
+                    row.classList.remove('border-danger', 'bg-light');
+                    if (badge) badge.classList.add('d-none');
+                }
+            }
+
+            if (e.target.matches('.delete-guest-checkbox')) {
+                const checkbox = e.target;
+                const row = checkbox.closest('tr');
+                if (!row) return;
+
+                if (checkbox.checked) {
+                    row.style.transition = 'all 0.3s ease';
+                    row.style.opacity = '0.5';
+                    row.classList.add('table-danger');
+                    showToast('Tamu ditandai untuk dihapus. Klik Simpan Perubahan untuk menerapkan.', 'warning');
+                } else {
+                    row.style.opacity = '1';
+                    row.classList.remove('table-danger');
+                }
+            }
+        });
     });
 </script>
 @endpush
